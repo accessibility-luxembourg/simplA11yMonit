@@ -2,6 +2,7 @@ const axeRgaa = require('./aXeRGAA.json')
 const AxeBuilder = require('axe-webdriverjs')
 const axeFrStrings = require('axe-core/locales/fr.json')
 const runTests = require('./testingCommon')
+const genReport = require('./reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
 
 
@@ -30,6 +31,8 @@ function mapRgaa(results) {
 
 function tagErrors(errors, url, confidence){
     return errors.map(e => {e.url = url; e.confidence = confidence; return e})
+            .map(e => { e.nodes = e.nodes.map(f => {return f.any}); return e} )
+            .map(e => {e.context = {}; e.context[e.url] = e.nodes; return e})
 }
 
 function analyse(page, result) {
@@ -45,6 +48,20 @@ function analyse(page, result) {
 
 function reporting(errors) {
   console.log(errors)
+  const groupByRGAA = {}
+  errors.forEach(e => {
+    if (groupByRGAA[e.rgaa] === undefined) {
+      groupByRGAA[e.rgaa] = [e]
+    } else {
+      let double = groupByRGAA[e.rgaa].find(f => f.id == e.id)
+      if (double !== undefined) {
+        double.context = {...double.context, ...e.context}
+      } else {
+        groupByRGAA[e.rgaa].push(e)
+      }
+    }
+  })
+  genReport(groupByRGAA)
 }
 
 runTests(checkPage, analyse, reporting)
