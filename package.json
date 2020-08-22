@@ -1,0 +1,15 @@
+{
+  "name": "simplA11yMonit",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "checkaccess": "node ./test/accessTests.js"
+  },
+  "author": "alain.vagner@sip.etat.lu",
+  "license": "MIT",
+  "dependencies": {
+    "axe-webdriverjs": "^2.3.0",
+    "selenium-webdriver": "^4.0.0-alpha.7"
+  }
+}
