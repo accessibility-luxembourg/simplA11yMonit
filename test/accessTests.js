@@ -31,11 +31,11 @@ function mapRgaa(results) {
 
 function tagErrors(errors, url, confidence){
     return errors.map(e => {e.url = url; e.confidence = confidence; return e})
-            .map(e => { e.nodes = e.nodes.map(f => {return f.any}); return e} )
             .map(e => {e.context = {}; e.context[e.url] = e.nodes; return e})
 }
 
 function analyse(page, result) {
+  console.log(page, JSON.stringify(result.incomplete, null, 2))
     const results = tagErrors(mapRgaa(result.violations), page, 'violation')
             .concat(tagErrors(mapRgaa(result.incomplete), page, 'needs-review'))
     if (results.length > 0) {
@@ -47,7 +47,7 @@ function analyse(page, result) {
 }
 
 function reporting(errors) {
-  console.log(errors)
+  //console.log(errors)
   const groupByRGAA = {}
   errors.forEach(e => {
     if (groupByRGAA[e.rgaa] === undefined) {

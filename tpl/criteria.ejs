@@ -25,6 +25,13 @@
                             </dl>
                             <% Object.keys(e.context).forEach(f => { %>
                                 <p><%= f %></p>
+                                <ul>
+                                <% e.context[f].forEach(node => { %>
+                                    <% node.target.forEach(target => { %>
+                                        <li><%= JSON.stringify(target, null, 2) %></li>
+                                    <% }) %>
+                                <% }) %>
+                                </ul>
                             <% }) %>
 
                         <% }) %>
