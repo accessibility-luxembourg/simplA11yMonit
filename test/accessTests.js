@@ -35,7 +35,6 @@ function tagErrors(errors, url, confidence){
 }
 
 function analyse(page, result) {
-  console.log(page, JSON.stringify(result.incomplete, null, 2))
     const results = tagErrors(mapRgaa(result.violations), page, 'violation')
             .concat(tagErrors(mapRgaa(result.incomplete), page, 'needs-review'))
     if (results.length > 0) {
@@ -46,7 +45,7 @@ function analyse(page, result) {
     return results
 }
 
-function reporting(errors) {
+function reporting(errors, pages) {
   //console.log(errors)
   const groupByRGAA = {}
   errors.forEach(e => {
@@ -61,7 +60,7 @@ function reporting(errors) {
       }
     }
   })
-  genReport(groupByRGAA)
+  genReport(groupByRGAA, pages)
 }
 
 runTests(checkPage, analyse, reporting)

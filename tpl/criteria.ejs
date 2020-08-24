@@ -1,45 +1,39 @@
 <div id="topics"> 
     <% topics.forEach(topic => { %>
-        <article>
-            <h3 id="topic-<%= topic.number %>">
-                Thématique <%= topic.number %> : 
-                <%= md.renderInline(topic.topic) %>
-            </h3>
             <% topic.criteria.forEach(crit => { 
                 let critId = `crit-${topic.number}-${crit.criterium.number}`
                 let id = topic.number+'.'+crit.criterium.number
                 if (shortList.includes(id) || (errors[id] !== undefined)) {
             %>
-                <h4 id="<%= critId %>">
-                    <a href="#<%= critId %>"></a>Critère <%= topic.number %>.<%= crit.criterium.number %></a>
-                    : <%- md.renderInline(crit.criterium.title) %></h4> 
+                <h3 id="<%= critId %>">
+                    <a href="https://accessibilite.public.lu/fr/rgaa4/criteres.html#<%= critId %>">Critère <%= topic.number %>.<%= crit.criterium.number %></a>
+                    : <%- md.renderInline(crit.criterium.title) %></h3> 
                     <% if (errors[id] !== undefined) { %>
                         <% errors[id].forEach(e => { %>
-                            <p><%= e.description %></p>
-                            <a href="<%=e.helpUrl %>"><%= e.help %></a>
-                            <dl>
-                                <dt>Degré de confiance</dt>
-                                <dd><%= e.confidence %></dd>
-                                <dt>Impact</dt>
-                                <dd><%= e.impact %></dd>
-                            </dl>
+                            <h4><%= e.description.replace('S’assure ', 'S’assurer ') %></h4>
+                            <p>Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
+                            <p>Degré de confiance : <%= e.confidence %></p>
+                            <p>Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
+                            <p>Occurences :</p>
+                            <ul>
                             <% Object.keys(e.context).forEach(f => { %>
+                                <li>
                                 <p><%= f %></p>
-                                <ul>
-                                <% e.context[f].forEach(node => { %>
-                                    <% node.target.forEach(target => { %>
-                                        <li><%= JSON.stringify(target, null, 2) %></li>
+                                    <ul>
+                                    <% e.context[f].forEach(node => { %>
+                                        <% node.target.forEach(target => { %>
+                                            <li><code><%= `${target}` %></code></li>
+                                        <% }) %>
                                     <% }) %>
-                                <% }) %>
-                                </ul>
+                                    </ul>
+                                </li>
                             <% }) %>
-
+                            </ul>
                         <% }) %>
                     
                     <% } %>  
             <% 
                 }
             })%>
-        </article>
     <% }) %>
 </div> 

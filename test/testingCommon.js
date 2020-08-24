@@ -20,7 +20,7 @@ function runTests(check, analyse, reporting) {
     const pages = getPages()
     checkPages(pages, check, analyse).then(errors => {
         console.log('nr of errors: ', errors.length)
-        reporting(errors)
+        reporting(errors, pages)
         process.exit(errors.length)
     }).catch(error => { 
         console.error('error', error.message)

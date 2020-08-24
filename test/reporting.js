@@ -1,23 +1,22 @@
 const fs = require('fs')
 const ejs = require('ejs')
 const MarkdownIt = require('markdown-it')
+const config = require('../config.json')
 
-
-const shortList = ['1.2', '3.1', '4.10', '4.11', '4.12', '7.3', '9.1', '9.2', '10.7', '10.14', '11.1', '11.2', '11.10', '12.8', '12.9', '12.11', '13.7']
 const criteres = JSON.parse(fs.readFileSync('../RGAA/criteres.json'))
 
 // generate criteria in FR
 const mdCriteres = MarkdownIt({
     replaceLink: function (link, env) {
         if (!link.match(/^#test-|#crit-|https?:\/\//)) {
-            return 'glossaire.html'+link
+            return 'https://accessibilite.public.lu/fr/rgaa4/glossaire.html'+link
         }
         return link
     }
 }).use(require('markdown-it-replace-link'))
 
-function renderToFile(data,  file) {
-    ejs.renderFile('./tpl/main.ejs', {data: data}, function(err, str){
+function renderToFile(data,  file, pages) {
+    ejs.renderFile('./tpl/main.ejs', {data: data, pages: pages}, function(err, str){
         if (err !== null) {
             console.log(err)
         }
@@ -25,13 +24,13 @@ function renderToFile(data,  file) {
     });
 }
 
-function genReport(data) {
+function genReport(data, pages) {
 
-    ejs.renderFile('./tpl/criteria.ejs',{topics: criteres.topics, errors: data, md: mdCriteres, shortList: shortList}, function(err, str) {
+    ejs.renderFile('./tpl/criteria.ejs',{topics: criteres.topics, errors: data, md: mdCriteres, shortList: config.shortList}, function(err, str) {
         if (err !== null) {
             console.log(err)
         }
-        renderToFile(str,  "audit.html")
+        renderToFile(str,  "audit.html", pages)
     })
 }
 

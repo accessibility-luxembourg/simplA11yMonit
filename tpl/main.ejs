@@ -7,6 +7,26 @@
 </head>
 <body>
     <main>
+      <h1>Audit d'accessibilité simplifié</h1>
+      <h2>Fiche signalétique</h2>
+      <p>Site: <%= pages[0].replace('http://','').replace('https://','').split(/[/?#]/)[0] %></p>
+      <p>Évaluateur : XXX</p>
+      <p>Date de l’évaluation : <%= new Date().toLocaleDateString('fr', {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+      <p>Échantillon de pages :</p>
+      <ul>
+        <% pages.forEach(e => { %>
+          <li><a href="<%= e %>"><%= e %></a></li>
+        <% }) %>
+      </ul>
+      <p>Méthode d'évaluation : Méthode de contrôle simplifiée de l’accessibilité pour le Luxembourg – v1</p>
+      <p>Référentiel : <a href="https://accessibilite.public.lu/fr/rgaa4/">RGAA v4</a></p>
+
+      <h2>Avertissement</h2>
+      <p>Attention, l’audit effectué est un audit simplifié et non un audit de conformité (ou audit "complet"). Il a vocation à détecter une série de problèmes d’accessibilité mais n'est pas exhaustif. Le fait qu’aucun problème ne soit remonté pour un critère RGAA donné ne signifie pas qu’il n’y a pas de problème d’accessibilité pour ce critère.
+      </p>
+      <h2>Résumé</h2>
+      TBD
+      <h2>Problèmes d’accessibilité par critère</h2>
         <%- data %>
       </div>
     </main>
