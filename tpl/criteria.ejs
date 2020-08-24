@@ -5,16 +5,16 @@
                 let id = topic.number+'.'+crit.criterium.number
                 if (shortList.includes(id) || (errors[id] !== undefined)) {
             %>
-                <h3 id="<%= critId %>">
+                <h2 id="<%= critId %>">
                     <a href="https://accessibilite.public.lu/fr/rgaa4/criteres.html#<%= critId %>">Critère <%= topic.number %>.<%= crit.criterium.number %></a>
-                    : <%- md.renderInline(crit.criterium.title) %></h3> 
+                    : <%- md.renderInline(crit.criterium.title) %></h2> 
                     <% if (errors[id] !== undefined) { %>
                         <% errors[id].forEach(e => { %>
-                            <h4><%= e.description.replace('S’assure ', 'S’assurer ') %></h4>
-                            <p>Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
-                            <p>Degré de confiance : <%= e.confidence %></p>
-                            <p>Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
-                            <p>Occurences :</p>
+                            <h3><%= e.description.replace('S’assure ', 'S’assurer ') %></h3>
+                            <p class="MsoNormal">Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
+                            <p  class="MsoNormal">Degré de confiance : <%= e.confidence %></p>
+                            <p class="MsoNormal">Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
+                            <p  class="MsoNormal">Occurences :</p>
                             <ul>
                             <% Object.keys(e.context).forEach(f => { %>
                                 <li>
