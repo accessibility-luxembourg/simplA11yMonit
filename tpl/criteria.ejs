@@ -14,7 +14,7 @@
                             <p class="MsoNormal">Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
                             <p  class="MsoNormal">Degré de confiance : <%= e.confidence %></p>
                             <p class="MsoNormal">Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
-                            <p  class="MsoNormal">Occurences :</p>
+                            <p  class="MsoNormal">Occurrences :</p>
                             <ul>
                             <% Object.keys(e.context).forEach(f => { %>
                                 <li>
