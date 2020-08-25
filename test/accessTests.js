@@ -1,8 +1,9 @@
-const axeRgaa = require('./aXeRGAA.json')
+const path = require('path')
+const axeRgaa = require('.'+path.sep+'aXeRGAA.json')
 const AxeBuilder = require('axe-webdriverjs')
-const axeFrStrings = require('axe-core/locales/fr.json')
-const runTests = require('./testingCommon')
-const genReport = require('./reporting')
+const axeFrStrings = require('axe-core'+path.sep+'locales'+path.sep+'fr.json')
+const runTests = require('.'+path.sep+'testingCommon')
+const genReport = require('.'+path.sep+'reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
 
 
