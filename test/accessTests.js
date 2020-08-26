@@ -12,7 +12,6 @@ async function checkPage(page) {
   let res;
   try {
     await driver.get(page)
-    // the twitter widget is an external content, thus out of scope
     await AxeBuilder(driver).configure({locale: axeFrStrings}).withRules(Object.keys(axeRgaa)).exclude('#twitter-widget-0').analyze(function(err, results) {
         if (err) {
             console.error(err)
@@ -47,7 +46,6 @@ function analyse(page, result) {
 }
 
 function reporting(errors, pages) {
-  //console.log(errors)
   const groupByRGAA = {}
   errors.forEach(e => {
     if (groupByRGAA[e.rgaa] === undefined) {
