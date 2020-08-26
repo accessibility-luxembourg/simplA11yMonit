@@ -10,7 +10,7 @@
                     : <%- md.renderInline(crit.criterium.title) %></h2> 
                     <% if (errors[id] !== undefined) { %>
                         <% errors[id].forEach(e => { %>
-                            <h3><%= e.description.replace('S’assure ', 'S’assurer ') %></h3>
+                            <h3><%= e.description %></h3>
                             <p class="MsoNormal">Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
                             <p  class="MsoNormal">Degré de confiance : <%= e.confidence %></p>
                             <p class="MsoNormal">Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
