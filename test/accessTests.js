@@ -1,3 +1,4 @@
+require('dotenv').config()
 const path = require('path')
 const axeRgaa = require('.'+path.sep+'aXeRGAA.json')
 const AxeBuilder = require('axe-webdriverjs')
@@ -11,8 +12,15 @@ async function checkPage(page) {
   let driver = await new Builder().forBrowser('chrome').usingServer('http://localhost:9515').build()
   let res;
   try {
+    if (process.env.LOGIN_PAGE !== undefined) {
+      await driver.get(process.env.LOGIN_PAGE)
+      await driver.findElement(By.css(process.env.LOGIN_USERNAME_SELECTOR)).sendKeys(process.env.LOGIN_USERNAME)
+      await driver.findElement(By.css(process.env.LOGIN_PASSWORD_SELECTOR)).sendKeys(process.env.LOGIN_PASSWORD)
+      await driver.findElement(By.css(process.env.LOGIN_BUTTON_SELECTOR)).click()
+    }
     await driver.get(page)
-    await AxeBuilder(driver).configure({locale: axeFrStrings}).withRules(Object.keys(axeRgaa)).exclude('#twitter-widget-0').analyze(function(err, results) {
+
+    await AxeBuilder(driver).configure({locale: axeFrStrings}).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
         if (err) {
             console.error(err)
         }
