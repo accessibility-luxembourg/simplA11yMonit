@@ -6,9 +6,10 @@ const axeFrStrings = require('..'+path.sep+'locales'+path.sep+'axe-fr.json')
 const runTests = require('.'+path.sep+'testingCommon')
 const genReport = require('.'+path.sep+'reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
-
+const lang = (process.env.LANGUAGE == 'en')?'en':'fr'
 
 async function checkPage(page) {
+  const axeSettings = (lang == 'fr')?{locale: axeFrStrings}:{}
   let driver = await new Builder().forBrowser('chrome').usingServer('http://localhost:9515').build()
   let res;
   try {
@@ -20,7 +21,7 @@ async function checkPage(page) {
     }
     await driver.get(page)
 
-    await AxeBuilder(driver).configure({locale: axeFrStrings}).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
+    await AxeBuilder(driver).configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
         if (err) {
             console.error(err)
         }
@@ -67,7 +68,7 @@ function reporting(errors, pages) {
       }
     }
   })
-  genReport(groupByRGAA, pages)
+  genReport(groupByRGAA, pages, lang)
 }
 
 runTests(checkPage, analyse, reporting)

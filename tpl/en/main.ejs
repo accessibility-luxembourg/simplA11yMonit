@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Simplified control</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <style>
+       p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{mso-style-priority:10;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Title Char";
+	mso-style-next:Normal;
+	margin:0cm;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:28.0pt;
+	font-family:"Calibri Light",sans-serif;
+	mso-ascii-font-family:"Calibri Light";
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:"Calibri Light";
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	letter-spacing:-.5pt;
+	mso-font-kerning:14.0pt;}
+     </style>
+</head>
+<body>
+    <main>
+      <p class="MsoTitle">Simplified accessibility control</p>
+      <h1>Data sheet</h1>
+      <p class="MsoNormal">Website: <%= pages[0].replace('http://','').replace('https://','').split(/[/?#]/)[0] %></p>
+      <p class="MsoNormal">Assessor: XXX</p>
+      <p class="MsoNormal">Control date: <%= new Date().toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+      <p class="MsoNormal">Pages sample:</p>
+      <ul>
+        <% pages.forEach(e => { %>
+          <li><a href="<%= e %>"><%= e %></a></li>
+        <% }) %>
+      </ul>
+      <p class="MsoNormal">Control method : Simplified accessibility control method for Luxembourg - v1</p>
+      <p class="MsoNormal">Framework : <a href="https://accessibilite.public.lu/fr/rgaa4/">RGAA v4</a></p>
+
+      <h1>Disclaimer</h1>
+      <p class="MsoNormal">Please note that the audit performed here is a simplified audit and not a conformity audit (or "complete" audit). 
+        It is intended to detect a series of accessibility problems but is not exhaustive. 
+        The fact that no problem is reported for a given RGAA criterion does not mean that there is no accessibility problem for this criterion.
+        Similarly, when we report one occurrence of a problem, that problem may have other occurrences. 
+        Do not hesitate to check exhaustively the accessibility of your site in accordance with the <a href="https://accessibilite.public.lu/fr/rgaa4/index.html">RGAA v4</a>.
+      </p>
+      <h1>Summary</h1>
+      TBD
+      <h1>Accessibility issues by criteria</h1>
+        <%- data %>
+      </div>
+    </main>
+</body>
+</html>

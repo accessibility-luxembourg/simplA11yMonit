@@ -34,7 +34,7 @@
       <h1>Fiche signalétique</h1>
       <p class="MsoNormal">Site: <%= pages[0].replace('http://','').replace('https://','').split(/[/?#]/)[0] %></p>
       <p class="MsoNormal">Évaluateur : XXX</p>
-      <p class="MsoNormal">Date de l’évaluation : <%= new Date().toLocaleDateString('fr', {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+      <p class="MsoNormal">Date de l’évaluation : <%= new Date().toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
       <p class="MsoNormal">Échantillon de pages :</p>
       <ul>
         <% pages.forEach(e => { %>
