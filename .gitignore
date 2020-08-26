@@ -1,5 +1,5 @@
-audit.html
-~$audit.html
+out/audit.html
+out/~$audit.html
 
 # Logs
 logs

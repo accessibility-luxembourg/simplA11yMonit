@@ -31,7 +31,7 @@ function genReport(data, pages) {
         if (err !== null) {
             console.log(err)
         }
-        renderToFile(str,  "audit.html", pages)
+        renderToFile(str,  "."+path.sep+"out"+path.sep+"audit.html", pages)
     })
 }
 

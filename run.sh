@@ -1,2 +1,2 @@
 NODE_ICU_DATA=./node_modules/full-icu node ./test/accessTests.js $@
-start winword audit.html &
+start winword out/audit.html &
