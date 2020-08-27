@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const ejs = require('ejs')
 const MarkdownIt = require('markdown-it')
+const { env } = require('process')
 const config = require('..'+path.sep+'config.json')
 
 // load rgaa criteria
@@ -29,13 +30,17 @@ function renderToFile(data,  file, pages, lang) {
 
 // genReport: generates a report, based on the criteria.ejs template
 function genReport(data, pages, lang) {
-
+    const outFile = "."+path.sep+"out"+path.sep+"audit.html";
     ejs.renderFile('.'+path.sep+'tpl'+path.sep+lang+path.sep+'criteria.ejs',{topics: criteres.topics, errors: data, md: mdCriteres, shortList: config.shortList}, function(err, str) {
         if (err !== null) {
             console.log(err)
         }
-        renderToFile(str,  "."+path.sep+"out"+path.sep+"audit.html", pages, lang)
+        renderToFile(str,  outFile, pages, lang)
     })
+    if (process.env.VIEWER !== undefined) {
+        const {exec} = require("child_process")
+        exec(process.env.VIEWER+ ' ' + outFile).unref()
+    }
 }
 
 exports = module.exports = genReport;

@@ -29,6 +29,9 @@ To configure the script you can use environment variables or a .env file.
 ### Language
 We currently can generate reports in english and french. To change the language, just set the LANGUAGE variable to "fr" or "en". By default the language is set to french.
 
+### Viewer
+You can set the VIEWER setting to the software of your choice. For example on Windows "start winword" will automatically open the report in MS Word at the end of the tests.
+
 ### Pages behind login
 If the pages you want to assess are behind login, you can setup the following variables to pass the login step.
 
