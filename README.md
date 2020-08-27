@@ -1,7 +1,7 @@
 # simplA11yMonit
 
 simplA11yMonit is a tool supporting the simplified accessibility monitoring method for Luxembourg.
-It executes automated accessibility tests (mainly based on aXe), and generates a report, pre-filled with the results of the tests. This document can then be used for the manual testing step.
+It executes automated accessibility tests (mainly based on aXe), and generates a report, pre-filled with the results of the tests. This document can then be used for the manual testing step. The report is based on a shortlist of criteria coming from the Luxembourgish version of the RGAA v4.
 
 ## Installation
 
@@ -15,7 +15,7 @@ This software is based on [selenium-webdriver](https://www.selenium.dev/document
 
 ## Usage
 
-1. Start chromedriver or another driver for selenium webdriver
+1. Start chromedriver or any other driver for selenium webdriver
 2. Select a few pages and run the script as follows:
 
 ```

@@ -1,3 +1,4 @@
+// getPages: get the list of urls to analyse from command line parameters
 function getPages() {
     if (process.argv.length < 2) {
         console.log('not enough arguments')
@@ -7,6 +8,7 @@ function getPages() {
     }
 }
 
+// checkPages: tests a list of URLs with check and then analyse the results
 async function checkPages(pages, check, analyse) {
     let errors = [];
     for (const p of pages) {
@@ -16,6 +18,7 @@ async function checkPages(pages, check, analyse) {
     return errors;
 }
 
+// runTests: the main function launching tests and then the reporting
 function runTests(check, analyse, reporting) {
     const pages = getPages()
     checkPages(pages, check, analyse).then(errors => {
