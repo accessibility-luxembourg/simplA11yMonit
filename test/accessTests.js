@@ -57,7 +57,7 @@ function analyse(page, result) {
     const results = tagErrors(result.violations, page, 'violation')
             .concat(tagErrors(result.incomplete, page, 'needs-review'))
     if (results.length > 0) {
-        console.log('❌', page)
+        console.log('❌', results.length, page)
     } else {
         console.log('✅', page)
     }
