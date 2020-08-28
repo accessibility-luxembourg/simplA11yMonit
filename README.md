@@ -1,7 +1,7 @@
 # simplA11yMonit
 
 simplA11yMonit is a tool supporting the simplified accessibility monitoring method for Luxembourg.
-It executes automated accessibility tests (mainly based on aXe), and generates a report, pre-filled with the results of the tests. This document can then be used for the manual testing step. The report is based on a shortlist of criteria coming from the Luxembourgish version of the RGAA v4.
+It executes automated accessibility tests based on axe-core, validates the markup of the pages with the W3C NU html checker. Then it generates a report, pre-filled with the results of the tests. This document can then be used for the manual testing step. The report is based on a shortlist of criteria coming from the Luxembourgish version of the RGAA v4.
 
 ## Installation
 
