@@ -118,6 +118,8 @@ function analyseW3C(page, res) {
                   'rgaa': '8.2', 
                   'url': page, 
                   'description': i18n.__('Please check that the HTML source code is valid'), 
+                  'help': i18n.__('Please use the W3C HTML validator'),
+                  'helpUrl': 'https://validator.w3.org/nu/',
                   confidence: 'violation', 
                   impact: 'serious'}
   result.context = {}
