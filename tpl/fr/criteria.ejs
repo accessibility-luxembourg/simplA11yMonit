@@ -11,19 +11,27 @@
                     <% if (errors[id] !== undefined) { %>
                         <% errors[id].forEach(e => { %>
                             <h3><%= e.description %></h3>
-                            <p class="MsoNormal">Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
-                            <p  class="MsoNormal">Degré de confiance : <%= e.confidence %></p>
-                            <p class="MsoNormal">Impact : <%= e.impact.replace('critical', 'critique').replace('serious', 'sérieux') %></p> 
+                            <% if (e.help !== undefined) { %>
+                                <p class="MsoNormal">Documentation : <a href="<%=e.helpUrl %>" hreflang="en"><%= e.help %></a></p>
+                            <% } %>
+                            <p  class="MsoNormal">Degré de confiance : <%= i18n.__(e.confidence) %></p>
+                            <p class="MsoNormal">Impact : <%= i18n.__(e.impact) %></p> 
                             <p  class="MsoNormal">Occurrences :</p>
                             <ul>
                             <% Object.keys(e.context).forEach(f => { %>
                                 <li>
                                 <p><%= f %></p>
                                     <ul>
-                                    <% e.context[f].forEach(node => { %>
-                                        <% node.target.forEach(target => { %>
-                                            <li><code><%= `${target}` %></code></li>
-                                        <% }) %>
+                                    <% Object.keys(e.context[f]).forEach(failure => { %>
+                                        <li><%= failure %>
+                                            <ul>
+                                                <% e.context[f][failure].forEach(node => { %> 
+                                                    <% node.target.forEach(target => { %>
+                                                    <li><code><%= `${target}` %></code></li>
+                                                    <% }) %>
+                                                <% }) %>
+                                            </ul>
+                                        </li>
                                     <% }) %>
                                     </ul>
                                 </li>

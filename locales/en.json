@@ -1,0 +1,7 @@
+{
+	"Please check that the HTML source code is valid": "Please check that the HTML source code is valid", 
+	"critical": "critical", 
+	"serious": "serious", 
+    "violation": "violation",
+    "needs review": "needs review"
+}

@@ -29,9 +29,10 @@ function renderToFile(data,  file, pages, lang) {
 }
 
 // genReport: generates a report, based on the criteria.ejs template
-function genReport(data, pages, lang) {
+function genReport(data, pages, i18n) {
     const outFile = "."+path.sep+"out"+path.sep+"audit.html";
-    ejs.renderFile('.'+path.sep+'tpl'+path.sep+lang+path.sep+'criteria.ejs',{topics: criteres.topics, errors: data, md: mdCriteres, shortList: config.shortList}, function(err, str) {
+    const lang = i18n.getLocale()
+    ejs.renderFile('.'+path.sep+'tpl'+path.sep+lang+path.sep+'criteria.ejs',{topics: criteres.topics, errors: data, md: mdCriteres, shortList: config.shortList, i18n: i18n}, function(err, str) {
         if (err !== null) {
             console.log(err)
         }

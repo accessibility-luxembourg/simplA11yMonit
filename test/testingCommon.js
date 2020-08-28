@@ -9,21 +9,23 @@ function getPages() {
 }
 
 // checkPages: tests a list of URLs with check and then analyse the results
-async function checkPages(pages, check, analyse) {
+async function checkPages(pages, check) {
     let errors = [];
     for (const p of pages) {
         let result = await check(p)
-        errors = errors.concat(analyse(p, result))
+        errors = errors.concat(result)
     }
     return errors;
 }
 
 // runTests: the main function launching tests and then the reporting
-function runTests(check, analyse, reporting) {
+function runTests(checks, reporting, i18n) {
     const pages = getPages()
-    checkPages(pages, check, analyse).then(errors => {
+    const pChecks = checks.map(e => {return checkPages(pages, e)})
+    Promise.all(pChecks).then(errors => {
+        errors = [].concat(...errors)
         console.log('nr of errors: ', errors.length)
-        reporting(errors, pages)
+        reporting(errors, pages, i18n)
         process.exit(errors.length)
     }).catch(error => { 
         console.error('error', error.message)
