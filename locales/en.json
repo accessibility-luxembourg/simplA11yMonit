@@ -3,5 +3,6 @@
 	"critical": "critical", 
 	"serious": "serious", 
     "violation": "violation",
-    "needs review": "needs review"
+    "needs review": "needs review",
+	"Please use the W3C HTML validator": "Please use the W3C HTML validator"
 }
