@@ -20,7 +20,7 @@ i18n.setLocale(lang)
 // checkWithAxe: checks one page with aXe and Selenium-webdriver
 async function checkWithAxe(page) {
   const axeSettings = (lang == 'fr')?{locale: axeFrStrings}:{}
-  let driver = await new Builder().forBrowser('chrome').usingServer('http://localhost:9515').build()
+  let driver = await new Builder().forBrowser('firefox').usingServer('http://localhost:4444').build()
   let res;
 
   try {

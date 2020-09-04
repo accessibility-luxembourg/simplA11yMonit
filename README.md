@@ -11,7 +11,7 @@ cd simplA11yMonit
 npm install
 ```
 
-This software is based on [selenium-webdriver](https://www.selenium.dev/documentation/en/webdriver/). The tests will be run in your browser. So you need to install a component enabling the tests to be run in your browser. Currently, we have only tested this software with [ChromeDriver](https://chromedriver.chromium.org/downloads) 
+This software is based on [selenium-webdriver](https://www.selenium.dev/documentation/en/webdriver/). The tests will be run in your browser. In our experience, executing tests in Firefox was more reliable than in Chrome. By default, this software is configured to execute the tests in Firefox. You need to install [GeckoDriver](https://github.com/mozilla/geckodriver/releases) and of course Firefox.
 
 ## Usage
 
