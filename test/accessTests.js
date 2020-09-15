@@ -104,12 +104,29 @@ function analyseAxe(page, result) {
     const results = tagErrorsAxe(result.violations, page, 'violation')
             .concat(tagErrorsAxe(result.incomplete, page, 'needs review'))
     if (results.length > 0) {
-        console.log('❌ axe ', results.length, page)
+        console.log('FAIL: axe ', results.length, page)
     } else {
-        console.log('✅ axe ', page)
+        console.log('PASS: axe ', page)
     }
     return results
 }
+
+// imported from the bookmarklet of Steve Faulkner, available here: https://validator.w3.org/nu/about.html
+// just removed "not allowed on element" as it seems to be unnecessary for the RGAA to report unknown attributes
+
+const filterStrings = [
+  "tag seen",
+  "Stray end tag",
+  "Bad start tag",
+  "violates nesting rules",
+  "Duplicate ID",
+  "first occurrence of ID",
+  "Unclosed element",
+  "not allowed as child of element",
+  "unclosed elements",
+  "unquoted attribute value",
+  "Duplicate attribute",
+];
 
 // analyseValidator: analyses the results of the test by the W3C validator for one page
 // cleanup of the data, display some feedback to the user
@@ -123,16 +140,17 @@ function analyseW3C(page, res) {
                   confidence: 'violation', 
                   impact: 'serious'}
   result.context = {}
-
-  result.context[page] = res.messages.filter(e => {return (e.type == 'error')}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
+  const filterRE = filterStrings.join("|");
+  result.context[page] = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
 
 
   if (result.context[page].length > 0) {
-      console.log('❌ w3c ', result.context[page].length, page)
+      console.log('FAIL: w3c ', result.context[page].length, page)
+      return [result]
   } else {
-      console.log('✅ w3c ', page)
+      console.log('PASS: w3c ', page)
+      return []
   }
-  return [result]
 }
 
 // reporting: generates a report to the user
