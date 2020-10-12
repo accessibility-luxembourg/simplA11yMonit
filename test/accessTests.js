@@ -56,8 +56,8 @@ async function checkWithW3CValidator(page) {
 
   // if we are behind a login, me must use selenium
   if (process.env.LOGIN_PAGE !== undefined) {
+    let driver = await new Builder().forBrowser('firefox').usingServer('http://localhost:4444').build()
     try {
-      let driver = await new Builder().forBrowser('chrome').usingServer('http://localhost:9515').build()
       await driver.get(process.env.LOGIN_PAGE)
       await driver.findElement(By.css(process.env.LOGIN_USERNAME_SELECTOR)).sendKeys(process.env.LOGIN_USERNAME)
       await driver.findElement(By.css(process.env.LOGIN_PASSWORD_SELECTOR)).sendKeys(process.env.LOGIN_PASSWORD)
