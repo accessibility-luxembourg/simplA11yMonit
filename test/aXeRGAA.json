@@ -10,16 +10,12 @@
     "aria-roles": "8.2",
     "aria-valid-attr": "8.2",
     "aria-valid-attr-value": "8.2",
-    "audio-caption": "4.1",
-    "autocomplete-valid": "11.13",
-    "avoid-inline-spacing": "10.12",
     "blink": "13.8",
     "button-name":	"11.9",
     "bypass": "12.7",
     "color-contrast": "3.2",
     "definition-list": "8.2",
     "dlitem": "8.2",
-    "document-title": "8.5",
     "duplicate-id-active": "8.2",
     "duplicate-id-aria": "8.2",
     "frame-title": "2.1",
@@ -40,5 +36,7 @@
     "td-headers-attr": "5.7",
     "th-has-data-cells": "5.7",
     "valid-lang": "8.8",
-    "video-caption": "4.3"
+    "video-caption": "4.3",
+    "region": "9.2",
+    "landmark-no-duplicate-main": "9.2"
 }
