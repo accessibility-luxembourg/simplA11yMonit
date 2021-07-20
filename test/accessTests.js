@@ -37,6 +37,7 @@ async function checkWithAxe(page) {
 
     // analyse the page
     // .gouvernemental_messenger is excluded from all pages
+    // .configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger')
     await AxeBuilder(driver).configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
         if (err) {
             console.error(err)
