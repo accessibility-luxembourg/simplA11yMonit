@@ -112,20 +112,23 @@ function analyseAxe(page, result) {
 }
 
 // imported from the bookmarklet of Steve Faulkner, available here: https://validator.w3.org/nu/about.html
+// new version available here https://github.com/stevefaulkner/wcagparsing explanations here: https://cdpn.io/stevef/debug/VRZdGJ
 // just removed "not allowed on element" as it seems to be unnecessary for the RGAA to report unknown attributes
 
 const filterStrings = [
   "tag seen",
   "Stray end tag",
   "Bad start tag",
-  "violates nesting rules",
+  "violates nesting",
   "Duplicate ID",
   "first occurrence of ID",
   "Unclosed element",
-  "not allowed as child of element",
+  "not allowed as child of",
   "unclosed elements",
   "unquoted attribute value",
   "Duplicate attribute",
+  "tabindex must not", 
+  "not appear as a descendant of"
 ];
 
 // analyseValidator: analyses the results of the test by the W3C validator for one page
