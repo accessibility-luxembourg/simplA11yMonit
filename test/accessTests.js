@@ -2,8 +2,8 @@ require('dotenv').config()
 const path = require('path')
 const { I18n } = require('i18n')
 const axeRgaa = require('.'+path.sep+'aXeRGAA.json')
-const AxeBuilder = require('axe-webdriverjs')
-const axeFrStrings = require('..'+path.sep+'locales'+path.sep+'axe-fr.json')
+const AxeBuilder = require('@axe-core/webdriverjs')
+const axeFrStrings = require('..'+path.sep+'node_modules'+path.sep+'axe-core'+path.sep+'locales'+path.sep+'fr.json')
 const runTests = require('.'+path.sep+'testingCommon')
 const genReport = require('.'+path.sep+'reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
@@ -20,7 +20,7 @@ i18n.setLocale(lang)
 // checkWithAxe: checks one page with aXe and Selenium-webdriver
 async function checkWithAxe(page) {
   const axeSettings = (lang == 'fr')?{locale: axeFrStrings}:{}
-  let driver = await new Builder().forBrowser('firefox').usingServer('http://localhost:4444').build()
+  const driver = await new Builder().forBrowser('firefox').usingServer('http://localhost:4444').build()
   let res;
 
   try {
@@ -37,8 +37,7 @@ async function checkWithAxe(page) {
 
     // analyse the page
     // .gouvernemental_messenger is excluded from all pages
-    // .configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger')
-    await AxeBuilder(driver).configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
+    await new AxeBuilder(driver).configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
         if (err) {
             console.error(err)
         }
@@ -94,7 +93,6 @@ function tagErrorsAxe(errors, url, confidence){
     return errors
             .map(e => { e.rgaa = axeRgaa[e.id];  return e})
             .map(e => {e.url = url; e.confidence = confidence; return e})
-            .map(e => {e.context = {}; e.context[e.url] = e.nodes; return e})
 }
 
 // analyseAxe: analyses the results of the audit by axe for one page
@@ -143,13 +141,12 @@ function analyseW3C(page, res) {
                   'helpUrl': 'https://validator.w3.org/nu/',
                   confidence: 'violation', 
                   impact: 'serious'}
-  result.context = {}
   const filterRE = filterStrings.join("|");
-  result.context[page] = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
+  result.nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
 
 
-  if (result.context[page].length > 0) {
-      console.log('FAIL: w3c ', result.context[page].length, page)
+  if (result.nodes.length > 0) {
+      console.log('FAIL: w3c ', result.nodes.length, page)
       return [result]
   } else {
       console.log('PASS: w3c ', page)
@@ -157,44 +154,4 @@ function analyseW3C(page, res) {
   }
 }
 
-// reporting: generates a report to the user
-function reporting(errors, pages, i18n) {
-  const groupByRGAA = {}
-  errors.forEach(e => {
-    if (groupByRGAA[e.rgaa] === undefined) {
-      groupByRGAA[e.rgaa] = [e]
-    } else {
-      let double = groupByRGAA[e.rgaa].find(f => f.id == e.id)
-      if (double !== undefined) {
-        double.context = {...double.context, ...e.context}
-      } else {
-        groupByRGAA[e.rgaa].push(e)
-      }
-    }
-  })
-  // cleanup occurences
-  Object.keys(groupByRGAA).forEach(e => {
-    groupByRGAA[e].forEach(error => {
-      Object.keys(error.context).forEach(url =>  {
-        error.context[url] = cleanupOccurences(error.context[url])
-      })
-    })
-  })
-
-  genReport(groupByRGAA, pages, i18n)
-}
-
-function cleanupOccurences(tabNodes) {
-  const result = {}
-  tabNodes.forEach(node => {
-    if (result[node.failureSummary] === undefined) {
-      result[node.failureSummary] = [node]
-    } else {
-      result[node.failureSummary].push(node)
-    }
-  })
-  return result;
-}
-
-
-runTests([checkWithAxe, checkWithW3CValidator], reporting, i18n)
+runTests([checkWithAxe, checkWithW3CValidator], genReport, i18n)

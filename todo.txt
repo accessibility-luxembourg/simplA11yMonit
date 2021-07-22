@@ -1,0 +1,4 @@
+- remove submodules
+- missing translations?
+- 8.1 / doctype with the W3C validator, possibility to test on https://accessibility-luxembourg.github.io/exercices-formation/graphiques.html
+

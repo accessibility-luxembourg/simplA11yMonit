@@ -1,0 +1,25 @@
+<r>
+    <rPr><b/><sz val="11"/><color rgb="FF000000"/><rFont val="Calibri"/><family val="2"/><scheme val="minor"/></rPr>
+    <t><%= error.description %></t>
+</r>
+<r>
+    <rPr>
+        <sz val="11"/>
+        <color rgb="FF000000"/>
+        <rFont val="Calibri"/>
+        <family val="2"/>
+        <scheme val="minor"/>
+    </rPr>
+    <t xml:space="preserve">
+    <% if (error.help !== undefined) { %>
+Documentation : <%=error.helpUrl %>
+    <% } %>
+Degré de confiance : <%= i18n.__(error.confidence) %>
+Impact : <%= i18n.__(error.impact) %>
+Occurrences :
+<% error.nodes.forEach(node => { %>- <%= node.failureSummary %>
+    <% node.target.forEach(target => { %>- <%= `${target}` %>
+    <% }) %>
+<% }) %>
+    </t>
+</r>
