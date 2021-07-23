@@ -1,9 +1,10 @@
 {
-	"Please check that the HTML source code is valid": "Vérifier que le code html de la page est valide",
+	"Please check that the HTML source code is valid": "Vérifiez que le code html de la page est valide",
 	"critical": "critique",
 	"serious": "sérieux",
 	"violation": "infraction",
 	"needs review": "à vérifier",
 	"Please use the W3C HTML validator": "Veuillez utiliser le validateur HTML du W3C",
-	"moderate": "modéré"
+	"moderate": "modéré", 
+	"Please check the doctype of the page": "Vérifiez le doctype de la page"
 }

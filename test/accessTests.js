@@ -134,7 +134,7 @@ const filterStrings = [
 // analyseValidator: analyses the results of the test by the W3C validator for one page
 // cleanup of the data, display some feedback to the user
 function analyseW3C(page, res) {
-  const result = {'id': 'w3c-validator', 
+  const validationIssue = {'id': 'w3c-validator', 
                   'rgaa': '8.2', 
                   'url': page, 
                   'description': i18n.__('Please check that the HTML source code is valid'), 
@@ -142,17 +142,37 @@ function analyseW3C(page, res) {
                   'helpUrl': 'https://validator.w3.org/nu/',
                   confidence: 'violation', 
                   impact: 'serious'}
+  const missingDoctypeIssue = {'id': 'w3c-validator', 
+  'rgaa': '8.1', 
+  'url': page, 
+  'description': i18n.__('Please check the doctype of the page'), 
+  'help': i18n.__('Please use the W3C HTML validator'),
+  'helpUrl': 'https://validator.w3.org/nu/',
+  confidence: 'violation', 
+  impact: 'serious'}
+
+
   const filterRE = filterStrings.join("|");
-  result.nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
+  const nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
 
+  // find doctype errors 
+  missingDoctypeIssue.nodes = nodes.filter(e => {return (e.failureSummary.includes('doctype'))})
+  validationIssue.nodes = nodes.filter(e => {return (!e.failureSummary.includes('doctype'))})
 
-  if (result.nodes.length > 0) {
-      console.log('FAIL: w3c ', result.nodes.length, page)
-      return [result]
+  const result = []
+  if (missingDoctypeIssue.nodes.length > 0) {
+    result.push(missingDoctypeIssue)
+  }
+  if (validationIssue.nodes.length > 0) {
+    result.push(validationIssue)
+  }
+
+  if (nodes.length > 0) {
+      console.log('FAIL: w3c ', nodes.length, page)
   } else {
       console.log('PASS: w3c ', page)
-      return []
   }
+  return result
 }
 
 runTests([checkWithAxe, checkWithW3CValidator], genReport, i18n)

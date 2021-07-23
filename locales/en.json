@@ -4,5 +4,7 @@
 	"serious": "serious", 
     "violation": "violation",
     "needs review": "needs review",
-	"Please use the W3C HTML validator": "Please use the W3C HTML validator"
+	"Please use the W3C HTML validator": "Please use the W3C HTML validator",
+	"moderate": "moderate", 
+	"Please check the doctype of the page": "Please check the doctype of the page"
 }
