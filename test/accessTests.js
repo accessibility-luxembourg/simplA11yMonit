@@ -101,8 +101,10 @@ function tagErrorsAxe(errors, url, confidence){
 function analyseAxe(page, result) {
     //console.log('analyse', result)
     // we only keep errors in the "violation" and "needs-review" categories
+    // and we filter out "needs review" for 3.2 because they are too frequent and not helping
     const results = tagErrorsAxe(result.violations, page, 'violation')
-            .concat(tagErrorsAxe(result.incomplete, page, 'needs review'))
+            .concat(tagErrorsAxe(result.incomplete, page, 'needs review')).filter(e => {return !(e.confidence == 'needs review' && e.rgaa == '3.2')})
+            
     if (results.length > 0) {
         console.log('FAIL: axe ', results.length, page)
     } else {
