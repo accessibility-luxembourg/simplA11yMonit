@@ -13,7 +13,7 @@ function genReport(errors, pages, titles, i18n) {
     const outFile = "."+path.sep+"out"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml"
     const lang = i18n.getLocale()
 
-    //console.log(JSON.stringify(errors, null, 4)) 
+    console.log(JSON.stringify(errors, null, 4)) 
 
     const todayStr = new Date().toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric' })
     tpl = tpl.replace('date_audit', todayStr) 
@@ -22,12 +22,12 @@ function genReport(errors, pages, titles, i18n) {
     tpl = tpl.replace('url_site', urlSite)
 
     pages.forEach(page => {
-        let emptyCrits = JSON.parse(JSON.stringify(config.shortList))
+        let emptyCrits = JSON.parse(JSON.stringify(config.allCriteria))
         const pageId = pages.indexOf(page) + 1
         tpl = tpl.replace(`url_page_${pageId}`, page)
         tpl = tpl.replace(`titre_page_${pageId}`, encode(titles[pageId -1]))
         errors.forEach(error => {
-            if (config.shortList.includes(error.rgaa) && error.url == page) {
+            if (config.automatedCriteria.includes(error.rgaa) && error.url == page) {
                 emptyCrits = emptyCrits.filter(e => e != error.rgaa)
                 const msg = ejs.render(fs.readFileSync('.'+path.sep+'tpl'+path.sep+'issue.ejs').toString(),{error: error, i18n: i18n})
                 tpl = tpl.replace(`<t>Modif_${pageId}_${error.rgaa}</t>`, msg)         
