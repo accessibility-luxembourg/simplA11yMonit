@@ -1,2 +1,1 @@
-- refactor messages from Axe
-- manage missing alt 1.1 / 1.2
+- missing translations
