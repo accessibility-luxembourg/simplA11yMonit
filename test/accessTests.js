@@ -94,6 +94,17 @@ function tagErrorsAxe(errors, url, confidence){
     return errors
             .map(e => { e.rgaa = axeRgaa[e.id];  return e})
             .map(e => {e.url = url; e.confidence = confidence; return e})
+            .flatMap(e => { // manage cases where multiple criteria match
+              if (typeof e.rgaa == "string") { 
+                return e 
+              } else {
+                return e.rgaa.map(crit => {
+                  const res = JSON.parse(JSON.stringify(e)); 
+                  res.rgaa = crit; 
+                  return res
+                })
+              }
+            })
 }
 
 // analyseAxe: analyses the results of the audit by axe for one page
@@ -104,7 +115,7 @@ function analyseAxe(page, result) {
     // and we filter out "needs review" for 3.2 because they are too frequent and not helping
     const results = tagErrorsAxe(result.violations, page, 'violation')
             .concat(tagErrorsAxe(result.incomplete, page, 'needs review')).filter(e => {return !(e.confidence == 'needs review' && e.rgaa == '3.2')})
-            
+
     if (results.length > 0) {
         console.log('FAIL: axe ', results.length, page)
     } else {
