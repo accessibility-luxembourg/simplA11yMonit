@@ -3,8 +3,8 @@ const cheerio = require('cheerio')
 
 // getPages: get the list of urls to analyse from command line parameters
 function getPages() {
-    if (process.argv.length < 2) {
-        console.log('not enough arguments')
+    if (process.argv.length != 5) {
+        console.error('Error: 3 urls are needed as parameters')
         process.exit(1)
     } else {
         return process.argv.slice(2, process.argv.length)
