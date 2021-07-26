@@ -1,1 +1,2 @@
 - missing translations
+- tester sur les 85 sites
