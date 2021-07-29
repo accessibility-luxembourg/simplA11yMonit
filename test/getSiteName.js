@@ -1,1 +1,1 @@
-console.log(process.argv[2].replace('http://','').replace('https://','').split(/[/?#]/)[0])
+console.log(process.argv[2].replace('http://','').replace('https://','').split(/[/?#]/)[0].replace('www.', ''))

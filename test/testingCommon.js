@@ -3,11 +3,13 @@ const cheerio = require('cheerio')
 
 // getPages: get the list of urls to analyse from command line parameters
 function getPages() {
-    if (process.argv.length != 5) {
+    const pages = process.argv.slice(2, process.argv.length).map(e => {return e.trim()}).filter(e => {return (e.length != 0);})
+    if (pages.length != 3) {
         console.error('Error: 3 urls are needed as parameters')
+        console.error('Parameters received: ', pages)
         process.exit(1)
     } else {
-        return process.argv.slice(2, process.argv.length)
+        return pages
     }
 }
 
@@ -44,7 +46,7 @@ function runTests(checks, reporting, i18n) {
             errors = [].concat(...errors)
             console.log('nr of errors: ', errors.length)
             reporting(errors, pages, titles, i18n)
-            process.exit(errors.length)
+            process.exit(0)
         }).catch(error => { 
             console.error('error', error.message)
             process.exit(1)

@@ -10,7 +10,7 @@ const {encode} = require('html-entities')
 // genReport: generates a report, based on the criteria.ejs template
 function genReport(errors, pages, titles, i18n) {
     let tpl = fs.readFileSync("."+path.sep+"static"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml").toString()
-    const outFile = "."+path.sep+"out"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml"
+    const outFile = "."+path.sep+"tmp"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml"
     const lang = i18n.getLocale()
 
     //console.log(JSON.stringify(errors, null, 4)) 
