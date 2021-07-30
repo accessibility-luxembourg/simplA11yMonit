@@ -1,5 +1,6 @@
 require('dotenv').config()
 const path = require('path')
+const fs = require('fs')
 const { I18n } = require('i18n')
 const axeRgaa = require('.'+path.sep+'aXeRGAA.json')
 const AxeBuilder = require('@axe-core/webdriverjs')
@@ -9,7 +10,11 @@ const runTests = require('.'+path.sep+'testingCommon')
 const genReport = require('.'+path.sep+'reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
 const validator = require('html-validator')
-
+// strings in english coming from the source code of the W3C validator (different packages in this organisation https://github.com/validator )
+// not found:  "tabindex must not"
+const tradFR = require('..'+path.sep+'locales'+path.sep+'validator-fr.json')
+// const translate = require('deepl')
+// const deeplKey = fs.readFileSync('.'+path.sep+'deepl-key.txt').toString()
 
 const i18n = new I18n({
   locales: ['en', 'fr'],
@@ -17,6 +22,7 @@ const i18n = new I18n({
 })
 const lang = (process.env.LANGUAGE == 'en')?'en':'fr'
 i18n.setLocale(lang)
+//const deeplParams = JSON.stringify({'free_api': true, 'source_lang': 'EN', 'target_lang': lang.toUpperCase(), 'auth_key': deeplKey})
 
 // checkWithAxe: checks one page with aXe and Selenium-webdriver
 async function checkWithAxe(page) {
@@ -126,23 +132,34 @@ function analyseAxe(page, result) {
 
 // imported from the bookmarklet of Steve Faulkner, available here: https://validator.w3.org/nu/about.html
 // new version available here https://github.com/stevefaulkner/wcagparsing explanations here: https://cdpn.io/stevef/debug/VRZdGJ
-// just removed "not allowed on element" as it seems to be unnecessary for the RGAA to report unknown attributes
+// just removed "not allowed on element" as it seems to be unnecessary for the RGAA to report unknown attributes, and removed "Duplicate ID" as it is already reported by Axe
 
 const filterStrings = [
   "tag seen",
   "Stray end tag",
   "Bad start tag",
   "violates nesting",
-  "Duplicate ID",
   "first occurrence of ID",
   "Unclosed element",
-  "not allowed as child of",
+  "not allowed as child of",  
   "unclosed elements",
   "unquoted attribute value",
   "Duplicate attribute",
   "tabindex must not", 
   "not appear as a descendant of"
 ];
+                               
+function getTrad(str) {
+  for (const en in tradFR) {
+    if (str.match(en)) {
+      const result = str.replace(new RegExp(en), tradFR[en])
+      return result;
+    }
+  }
+  console.log('WARN: no translation found for' + str)
+  return str
+}
+
 
 // analyseValidator: analyses the results of the test by the W3C validator for one page
 // cleanup of the data, display some feedback to the user
@@ -166,7 +183,28 @@ function analyseW3C(page, res) {
 
 
   const filterRE = filterStrings.join("|");
-  const nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message; return e;})
+  let nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message.replace('(Suppressing further errors from this subtree.)', '').trim(); return e;})
+
+  nodes = nodes.map(e => {e.failureSummary = getTrad(e.failureSummary); return e;})
+
+  // const translations = {}
+  // nodes.forEach(e => {
+  //   if (translations[e.failureSummary] === undefined) {
+  //     translations[e.failureSummary] = ''
+  //   }
+  // })
+  // const params = JSON.parse(deeplParams) 
+  // params.text = Object.keys(translations).join("\n")
+  // translate(params).then(v => { 
+  //   const translated = v.data.translations[0].text.split("\n")
+  //   Object.keys(translations).forEach((k, i) => {
+  //     translations[k] = translated[i]
+  //   })
+  //   console.log(translations)
+  //   nodes = nodes.map(e => { e.failureSummary = translations[e.failureSummary]; return e})
+    
+  // }).catch(e => console.error(e))
+
 
   // find doctype errors 
   missingDoctypeIssue.nodes = nodes.filter(e => {return (e.failureSummary.includes('doctype'))})

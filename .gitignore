@@ -104,3 +104,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+geckodriver.exe
+tmp/
+deepl-key.txt
