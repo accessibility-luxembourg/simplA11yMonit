@@ -3,6 +3,7 @@ const path = require('path')
 const ejs = require('ejs')
 const config = require('..'+path.sep+'config.json')
 const {encode} = require('html-entities')
+const cheerio = require('cheerio')
 
 
 
@@ -11,7 +12,15 @@ const {encode} = require('html-entities')
 function genReport(errors, pages, titles, i18n) {
     let tpl = fs.readFileSync("."+path.sep+"static"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml").toString()
     const outFile = "."+path.sep+"tmp"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml"
+    const worksheetPath = "."+path.sep+"tmp"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"worksheets"+path.sep
+    const worksheetFiles = ['sheet7.xml', 'sheet8.xml', 'sheet9.xml']
+    const statusCodes = {'c': '76', 'nc': '77', 'na': '78'}
     const lang = i18n.getLocale()
+
+    const worksheets = []
+    for (let i=0; i<3; i++) {
+        worksheets[i] = cheerio.load(fs.readFileSync(worksheetPath+worksheetFiles[i]), {xml: {normalizeWhitespace: true}})
+    }
 
     //console.log(JSON.stringify(errors, null, 4)) 
 
@@ -24,9 +33,11 @@ function genReport(errors, pages, titles, i18n) {
 
     // manage the case where we can have multiple errors for the same page and the same criteria
     const msgs = {}
+    const status = {}
     pages.forEach(p => {
         const pageId = pages.indexOf(p) + 1
-        msgs[pageId] = {} 
+        msgs[pageId] = {}
+        status[pageId-1] = {} 
         errors.forEach(error => {
             if (config.automatedCriteria.includes(error.rgaa) && error.url == p) {
                 const msg = ejs.render(fs.readFileSync('.'+path.sep+'tpl'+path.sep+'issue.ejs').toString(),{error: error, i18n: i18n})
@@ -34,13 +45,33 @@ function genReport(errors, pages, titles, i18n) {
                     msgs[pageId][error.rgaa] = msg
                 } else {
                     msgs[pageId][error.rgaa] += "\n\n"+msg
-                }      
+                }
+                if (error.status) {
+                    status[pageId-1][error.rgaa] = error.status
+                }        
+            }
+        })
+        // we can say when fully automated criteria are valid
+        config.fullyAutomatedCriteria.forEach(crit => {
+            if (status[pageId-1][crit] === undefined && msgs[pageId][crit] === undefined) {
+                status[pageId-1][crit] = 'c'
             }
         })
     })
+    //console.log(status)
 
+    // generate worksheets
+    pages.forEach(p => {
+        const pageId = pages.indexOf(p)
+        Object.keys(status[pageId]).forEach(crit => {
+            const critIdx = config.allCriteria.indexOf(crit) + 4
+            //console.log(`c[r="D${critIdx}"] > v`, worksheets[pageId](`c[r="D${critIdx}"] > v`).text(), statusCodes[status[pageId][crit]])
+            
+            worksheets[pageId](`c[r="D${critIdx}"] > v`).text(statusCodes[status[pageId][crit]])
+        })
+    })
 
-
+    // generate sharedStrings
     pages.forEach(page => {
         let emptyCrits = JSON.parse(JSON.stringify(config.allCriteria))
         const pageId = pages.indexOf(page) + 1
@@ -57,6 +88,10 @@ function genReport(errors, pages, titles, i18n) {
         })
         fs.writeFileSync(outFile, tpl)
     })
+    for (let i=0; i<3; i++) {
+        fs.writeFileSync(worksheetPath+worksheetFiles[i], worksheets[i].xml())
+    }
+
 }
 
 exports = module.exports = genReport;

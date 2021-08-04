@@ -13,8 +13,6 @@ const validator = require('html-validator')
 // strings in english coming from the source code of the W3C validator (different packages in this organisation https://github.com/validator )
 // not found:  "tabindex must not"
 const tradFR = require('..'+path.sep+'locales'+path.sep+'validator-fr.json')
-// const translate = require('deepl')
-// const deeplKey = fs.readFileSync('.'+path.sep+'deepl-key.txt').toString()
 
 const i18n = new I18n({
   locales: ['en', 'fr'],
@@ -22,7 +20,6 @@ const i18n = new I18n({
 })
 const lang = (process.env.LANGUAGE == 'en')?'en':'fr'
 i18n.setLocale(lang)
-//const deeplParams = JSON.stringify({'free_api': true, 'source_lang': 'EN', 'target_lang': lang.toUpperCase(), 'auth_key': deeplKey})
 
 // checkWithAxe: checks one page with aXe and Selenium-webdriver
 async function checkWithAxe(page) {
@@ -119,7 +116,7 @@ function analyseAxe(page, result) {
     //console.log('analyse', result)
     // we only keep errors in the "violation" and "needs-review" categories
     // and we filter out "needs review" for 3.2 because they are too frequent and not helping
-    const results = tagErrorsAxe(result.violations, page, 'violation')
+    const results = tagErrorsAxe(result.violations, page, 'violation').map(e => {e.status = 'nc'; return e; })
             .concat(tagErrorsAxe(result.incomplete, page, 'needs review')).filter(e => {return !(e.confidence == 'needs review' && e.rgaa == '3.2')})
 
     if (results.length > 0) {
@@ -170,8 +167,8 @@ function analyseW3C(page, res) {
                   'description': i18n.__('Please check that the HTML source code is valid'), 
                   'help': i18n.__('Please use the W3C HTML validator'),
                   'helpUrl': 'https://validator.w3.org/nu/',
-                  confidence: 'violation', 
-                  impact: 'serious'}
+                  'status': 'nc'
+                }
   const missingDoctypeIssue = {'id': 'w3c-validator', 
   'rgaa': '8.1', 
   'url': page, 
@@ -179,32 +176,13 @@ function analyseW3C(page, res) {
   'help': i18n.__('Please use the W3C HTML validator'),
   'helpUrl': 'https://validator.w3.org/nu/',
   confidence: 'violation', 
-  impact: 'serious'}
+  impact: 'serious', 
+  status: 'nc'}
 
 
   const filterRE = filterStrings.join("|");
   let nodes = res.messages.filter(e => {return (e.type == 'error')}).filter(e => { return (e.message.match(filterRE) !== null)}).map(e => {e.target = [e.extract]; e.failureSummary = e.message.replace('(Suppressing further errors from this subtree.)', '').trim(); return e;})
-
   nodes = nodes.map(e => {e.failureSummary = getTrad(e.failureSummary); return e;})
-
-  // const translations = {}
-  // nodes.forEach(e => {
-  //   if (translations[e.failureSummary] === undefined) {
-  //     translations[e.failureSummary] = ''
-  //   }
-  // })
-  // const params = JSON.parse(deeplParams) 
-  // params.text = Object.keys(translations).join("\n")
-  // translate(params).then(v => { 
-  //   const translated = v.data.translations[0].text.split("\n")
-  //   Object.keys(translations).forEach((k, i) => {
-  //     translations[k] = translated[i]
-  //   })
-  //   console.log(translations)
-  //   nodes = nodes.map(e => { e.failureSummary = translations[e.failureSummary]; return e})
-    
-  // }).catch(e => console.error(e))
-
 
   // find doctype errors 
   missingDoctypeIssue.nodes = nodes.filter(e => {return (e.failureSummary.includes('doctype'))})
