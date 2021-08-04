@@ -14,8 +14,6 @@
     <% if (error.help !== undefined) { %>
 Documentation : <%=error.helpUrl %>
     <% } %>
-Degré de confiance : <%= i18n.__(error.confidence) %>
-Impact : <%= i18n.__(error.impact) %>
 Occurrences :
 <% error.nodes.forEach(node => { %>- <%= node.failureSummary %> (Ex : <% node.target.forEach(target => { %><%= `${target}` %>, <% }) %>)
 <% }) %>
