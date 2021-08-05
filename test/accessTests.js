@@ -92,6 +92,51 @@ async function checkWithW3CValidator(page) {
   return analyseW3C(page, res);
 }
 
+
+function getNRImagesWithoutLinks() {
+  function isImageLink(e) {
+    return (e.parentNode.nodeName == 'A' && e.nextElementSibling == null && e.previousElementSibling == null) 
+  }
+  return Array.from(document.querySelectorAll('img, [role="img"], area, input[type="image"], svg, object[type="image"], embed[type="image"], canvas')).filter(e => { return !isImageLink(e)}).filter(e => {return !(window.getComputedStyle(e).display === "none")}).length
+}
+
+// check if some elements exist in the page, otherwise return NA
+async function checkPreconditions(page) {
+  const driver = await new Builder().forBrowser('firefox').usingServer('http://localhost:4444').build()
+  const mapping = {
+    'img': ['1.1', '1.2', '1.3', '1.6', '1.7'],
+    'iframe': ['2.1'],
+    'table': ['5.6', '5.7'], 
+    'formElts': ['11.5', '11.6', '11.7', '11.8', '11.9', '11.10'],
+    'form': ['11.1', '11.2'],
+    'lang': ['8.8']
+  }
+  const results = []
+  try {  
+      // get the page
+      await driver.get(page)
+      const counters = {}
+      counters['img'] = await driver.executeScript(getNRImagesWithoutLinks)
+      counters['iframe'] = (await driver.findElements(By.css('frame, iframe'))).length
+      counters['table'] = (await driver.findElements(By.css('table, [role="table"]'))).length
+      counters['form'] = (await driver.findElements(By.css('form, [role="form"]'))).length
+      counters['formElts'] = (await driver.findElements(By.css('input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="number"],input[type="tel"], input[type="url"], textarea, input[type="checkbox"], input[type="radio"], input[type="date"], input[type="range"], input[type="color"], input[type="time"], input[type="month"], input[type="week"], input[type="date-local"], select, datalist, optgroup, option, input[type="file"], output, progress, meter, [role="progressbar"], [role="slider"], [role="spinbutton"], [role="textbox"], [role="listbox"], [role="searchbox"], [role="combobox"], [role="option"], [role="checkbox"], [role="radio"], [role="switch"]'))).length
+      counters['lang'] = (await driver.findElements(By.css('body [lang]'))).length
+
+      Object.keys(counters).forEach(precond => {
+        if (counters[precond] == 0) {
+          mapping[precond].forEach(e => {
+            results.push({'rgaa': e, 'url': page, 'status': 'na'})
+          })
+        }
+      })
+
+    } finally {
+      await driver.quit()
+    }
+    return results
+}
+
 // tagErrorsAxe: annotates the results of the tests with the related RGAA criteria
 function tagErrorsAxe(errors, url, confidence){
     return errors
@@ -204,4 +249,4 @@ function analyseW3C(page, res) {
   return result
 }
 
-runTests([checkWithAxe, checkWithW3CValidator], genReport, i18n)
+runTests([checkWithAxe, checkWithW3CValidator, checkPreconditions], genReport, i18n)

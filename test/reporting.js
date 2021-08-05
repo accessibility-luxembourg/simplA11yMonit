@@ -15,6 +15,7 @@ function genReport(errors, pages, titles, i18n) {
     const worksheetPath = "."+path.sep+"tmp"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"worksheets"+path.sep
     const worksheetFiles = ['sheet7.xml', 'sheet8.xml', 'sheet9.xml']
     const statusCodes = {'c': '76', 'nc': '77', 'na': '78'}
+    const statusOrder = {'c': 0, 'na': 1, 'nc': 2}
     const lang = i18n.getLocale()
 
     const worksheets = []
@@ -39,16 +40,25 @@ function genReport(errors, pages, titles, i18n) {
         msgs[pageId] = {}
         status[pageId-1] = {} 
         errors.forEach(error => {
-            if (config.automatedCriteria.includes(error.rgaa) && error.url == p) {
-                const msg = ejs.render(fs.readFileSync('.'+path.sep+'tpl'+path.sep+'issue.ejs').toString(),{error: error, i18n: i18n})
-                if (msgs[pageId][error.rgaa] === undefined) {
-                    msgs[pageId][error.rgaa] = msg
-                } else {
-                    msgs[pageId][error.rgaa] += "\n\n"+msg
+            if (error.url == p) {
+                if (config.automatedCriteria.includes(error.rgaa) && (error.status != 'na')) {
+                    const msg = ejs.render(fs.readFileSync('.'+path.sep+'tpl'+path.sep+'issue.ejs').toString(),{error: error, i18n: i18n})
+                    if (msgs[pageId][error.rgaa] === undefined) {
+                        msgs[pageId][error.rgaa] = msg
+                    } else {
+                        msgs[pageId][error.rgaa] += "\n\n"+msg
+                    }     
                 }
                 if (error.status) {
-                    status[pageId-1][error.rgaa] = error.status
-                }        
+                    if (status[pageId-1][error.rgaa] !== undefined) {
+                        // 'nc'> 'na' > 'c'
+                        if (statusOrder[status[pageId-1][error.rgaa]] < statusOrder[error.status]){
+                            status[pageId-1][error.rgaa] = error.status  
+                        }
+                    } else {
+                        status[pageId-1][error.rgaa] = error.status
+                    }
+                }   
             }
         })
         // we can say when fully automated criteria are valid

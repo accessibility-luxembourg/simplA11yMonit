@@ -35,16 +35,20 @@ async function getTitles(pages) {
     }))
 }
 
+// https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
+const serial = funcs =>
+    funcs.reduce((promise, func) =>
+        promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]))
 
 // runTests: the main function launching tests and then the reporting
 function runTests(checks, reporting, i18n) {
     const pages = getPages()
 
     getTitles(pages).then(titles => {
-        const pChecks = checks.map(e => {return checkPages(pages, e)})
-        Promise.all(pChecks).then(errors => {
+        const pChecks = checks.map(e => () => {return checkPages(pages, e)})
+        serial(pChecks).then(errors => {
             errors = [].concat(...errors)
-            console.log('nr of errors: ', errors.length)
+            console.log('nr of errors: ', errors.filter(e => {return (e.status != 'na')}).length)
             reporting(errors, pages, titles, i18n)
             process.exit(0)
         }).catch(error => { 
