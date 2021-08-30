@@ -10,7 +10,8 @@ else
     then
         cd tmp/template-grille-audit-simplifie
         7z a -tzip  ../$fileName.xlsx * 1> /dev/null
-        cd ../.. && mv tmp/$fileName.xlsx out && rm -rf tmp
+        cd ../.. && mv tmp/$fileName.xlsx out 
+        rm -rf tmp
     else
         echo "Audit of $fileName failed, exit code: $?"
         exit 1

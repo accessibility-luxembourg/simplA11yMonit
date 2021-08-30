@@ -21,6 +21,7 @@ const i18n = new I18n({
 const lang = (process.env.LANGUAGE == 'en')?'en':'fr'
 i18n.setLocale(lang)
 
+
 // checkWithAxe: checks one page with aXe and Selenium-webdriver
 async function checkWithAxe(page) {
   const axeSettings = (lang == 'fr')?{locale: axeFrStrings}:{}
@@ -164,11 +165,11 @@ function analyseAxe(page, result) {
     const results = tagErrorsAxe(result.violations, page, 'violation').map(e => {e.status = 'nc'; return e; })
             .concat(tagErrorsAxe(result.incomplete, page, 'needs review')).filter(e => {return !(e.confidence == 'needs review' && e.rgaa == '3.2')})
 
-    if (results.length > 0) {
-        console.log('FAIL: axe ', results.length, page)
-    } else {
-        console.log('PASS: axe ', page)
-    }
+    // if (results.length > 0) {
+    //     console.log('FAIL: axe ', results.length, page)
+    // } else {
+    //     console.log('PASS: axe ', page)
+    // }
     return results
 }
 
@@ -241,11 +242,11 @@ function analyseW3C(page, res) {
     result.push(validationIssue)
   }
 
-  if (nodes.length > 0) {
-      console.log('FAIL: w3c ', nodes.length, page)
-  } else {
-      console.log('PASS: w3c ', page)
-  }
+  // if (nodes.length > 0) {
+  //     console.log('FAIL: w3c ', nodes.length, page)
+  // } else {
+  //     console.log('PASS: w3c ', page)
+  // }
   return result
 }
 

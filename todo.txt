@@ -1,2 +1,10 @@
-- missing translations
-- tester sur les 85 sites
+- si le doctype n'est pas html5, alors la validation html ne fonctionne pas. ne pas mettre de C si pas de résultat.
+- mise à jour du site, générateur seuils pour niveau de conformité. supprimer le test "region" du 9.2 dans la méthode simplifiée
+
+
+
+
+
+
+
+

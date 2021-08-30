@@ -48,7 +48,7 @@ function runTests(checks, reporting, i18n) {
         const pChecks = checks.map(e => () => {return checkPages(pages, e)})
         serial(pChecks).then(errors => {
             errors = [].concat(...errors)
-            console.log('nr of errors: ', errors.filter(e => {return (e.status != 'na')}).length)
+            //console.log('nr of errors: ', errors.filter(e => {return (e.status != 'na')}).length)
             reporting(errors, pages, titles, i18n)
             process.exit(0)
         }).catch(error => { 
