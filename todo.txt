@@ -1,5 +1,13 @@
-- si le doctype n'est pas html5, alors la validation html ne fonctionne pas. ne pas mettre de C si pas de résultat.
+- si le doctype n'est pas html5,
+     - alors la validation html ne fonctionne pas. ne pas mettre de C si pas de résultat.
+    - mettre 9.2 en NA
 - mise à jour du site, générateur seuils pour niveau de conformité. supprimer le test "region" du 9.2 dans la méthode simplifiée
+- 12.8 rajouter le test "tabindex". S'il y a du tabindex > 0 alors on a certainement un problème d'ordre de tabulation (à vérifier manuellement)
+- 2.1 rajouter un test, si aria-hidden="true" alors NA 
+
+
+
+
 
 
 
