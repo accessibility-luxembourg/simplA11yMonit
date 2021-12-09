@@ -5,7 +5,6 @@ const { I18n } = require('i18n')
 const axeRgaa = require('.'+path.sep+'aXeRGAA.json')
 const AxeBuilder = require('@axe-core/webdriverjs')
 const axeFrStrings = require('..'+path.sep+'locales'+path.sep+'axe4-fr.json')
-//const axeFrStrings = require('..'+path.sep+'node_modules'+path.sep+'axe-core'+path.sep+'locales'+path.sep+'fr.json')
 const runTests = require('.'+path.sep+'testingCommon')
 const genReport = require('.'+path.sep+'reporting')
 const {Builder, By, Key, until} = require('selenium-webdriver')
@@ -41,7 +40,8 @@ async function checkWithAxe(page) {
     await driver.get(page)
 
     // analyse the page
-    // .gouvernemental_messenger is excluded from all pages
+    // special configuration for Luxembourg: .gouvernemental_messenger is excluded from all pages
+    // FIXME: should be moved to a config file or environment variable
     await new AxeBuilder(driver).configure(axeSettings).withRules(Object.keys(axeRgaa)).exclude('.gouvernemental_messenger').analyze(function(err, results) {
         if (err) {
             console.error(err)
@@ -159,17 +159,11 @@ function tagErrorsAxe(errors, url, confidence){
 // analyseAxe: analyses the results of the audit by axe for one page
 // cleanup of the data, display some feedback to the user
 function analyseAxe(page, result) {
-    //console.log('analyse', result)
     // we only keep errors in the "violation" and "needs-review" categories
     // and we filter out "needs review" for 3.2 because they are too frequent and not helping
     const results = tagErrorsAxe(result.violations, page, 'violation').map(e => {e.status = 'nc'; return e; })
             .concat(tagErrorsAxe(result.incomplete, page, 'needs review')).filter(e => {return !(e.confidence == 'needs review' && e.rgaa == '3.2')})
 
-    // if (results.length > 0) {
-    //     console.log('FAIL: axe ', results.length, page)
-    // } else {
-    //     console.log('PASS: axe ', page)
-    // }
     return results
 }
 
@@ -242,11 +236,6 @@ function analyseW3C(page, res) {
     result.push(validationIssue)
   }
 
-  // if (nodes.length > 0) {
-  //     console.log('FAIL: w3c ', nodes.length, page)
-  // } else {
-  //     console.log('PASS: w3c ', page)
-  // }
   return result
 }
 

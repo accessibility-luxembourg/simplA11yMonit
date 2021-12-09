@@ -64,5 +64,5 @@ LOGIN_PASSWORD_SELECTOR='input[name="password"]'
 LOGIN_BUTTON_SELECTOR='.connection input'
 ```
 
-## license
+## License
 This software is (c) Information and press service of the luxembourgish government and licensed under the MIT license.

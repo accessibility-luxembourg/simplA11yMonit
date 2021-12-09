@@ -5,9 +5,6 @@ const config = require('..'+path.sep+'config.json')
 const {encode} = require('html-entities')
 const cheerio = require('cheerio')
 
-
-
-
 // genReport: generates a report, based on the criteria.ejs template
 function genReport(errors, pages, titles, i18n) {
     let tpl = fs.readFileSync("."+path.sep+"static"+path.sep+"template-grille-audit-simplifie"+path.sep+"xl"+path.sep+"sharedStrings.xml").toString()
@@ -22,8 +19,6 @@ function genReport(errors, pages, titles, i18n) {
     for (let i=0; i<3; i++) {
         worksheets[i] = cheerio.load(fs.readFileSync(worksheetPath+worksheetFiles[i]), {xml: {normalizeWhitespace: true}})
     }
-
-    //console.log(JSON.stringify(errors, null, 4)) 
 
     const todayStr = new Date().toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric' })
     tpl = tpl.replace('date_audit', todayStr) 
@@ -68,14 +63,12 @@ function genReport(errors, pages, titles, i18n) {
             }
         })
     })
-    //console.log(status)
 
     // generate worksheets
     pages.forEach(p => {
         const pageId = pages.indexOf(p)
         Object.keys(status[pageId]).forEach(crit => {
             const critIdx = config.allCriteria.indexOf(crit) + 4
-            //console.log(`c[r="D${critIdx}"] > v`, worksheets[pageId](`c[r="D${critIdx}"] > v`).text(), statusCodes[status[pageId][crit]])
             
             worksheets[pageId](`c[r="D${critIdx}"] > v`).text(statusCodes[status[pageId][crit]])
         })
