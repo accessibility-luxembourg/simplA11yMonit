@@ -9,8 +9,9 @@ else
     if [ $? -eq 0 ]
     then
         cd tmp/template-grille-audit-simplifie
-        7z a -tzip  ../$fileName.xlsx * 1> /dev/null
-        cd ../.. && mv tmp/$fileName.xlsx out 
+        powershell -Command "Compress-Archive -Path * -DestinationPath ../$fileName.zip"
+        # 7z a -tzip  ../$fileName.xlsx * 1> /dev/null
+        cd ../.. && mv tmp/$fileName.zip out/$fileName.xlsx
         rm -rf tmp
     else
         echo "Audit of $fileName failed, exit code: $?"
