@@ -13,7 +13,7 @@ cd simplA11yMonit
 npm install
 ```
 
-This software is based on [selenium-webdriver](https://www.selenium.dev/documentation/en/webdriver/). The tests will be run in your browser. By default, this software is configured to execute the tests in Firefox. You need to install [GeckoDriver](https://github.com/mozilla/geckodriver/releases) and of course Firefox.
+This software is based on [selenium-webdriver](https://www.selenium.dev/documentation/en/webdriver/). The tests will be run in your browser. By default, this software is configured to execute the tests in Firefox. You need to install [GeckoDriver](https://github.com/mozilla/geckodriver/releases) and of course Firefox. If you have Firefox for windows 64bit, you need to download the corresponding version of GeckoDriver (i.e. Win64). Please copy `geckodriver.exe` to the project folder.
 
 ## Usage
 
@@ -36,6 +36,8 @@ When this file has been created, it is possible to generate all outputfiles with
 ```
 ./runall.sh
 ```
+
+Runall.sh will launch automatically geckodriver.exe. If it is already started beforehand, feel free to stop it.
 
 ## Configuration
 To configure the script you can use environment variables or a .env file.
