@@ -99,6 +99,11 @@ def gen_report(errors, pages, titles, lang):
             if crit not in status and crit not in msgs:
                 status[crit] = 'c'
 
+        # Always-compliant criteria are forced to C regardless of automated findings
+        for crit in _config.get('alwaysCompliantCriteria', []):
+            status[crit] = 'c'
+            msgs.pop(crit, None)
+
         # Write statuses and issue descriptions to the worksheet
         for crit_idx, crit in enumerate(_config['allCriteria']):
             row = crit_idx + _ROW_CRITERIA_START
