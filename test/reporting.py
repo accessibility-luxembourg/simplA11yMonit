@@ -15,9 +15,9 @@ _STATUS_ORDER = {'c': 0, 'na': 1, 'nc': 2}
 _PAGE_SHEETS = ['P01', 'P02', 'P03']
 
 # Column indices (1-based, matching Excel columns)
-_COL_STATUS = 4   # D
-_COL_ISSUES = 6   # F
-_ROW_CRITERIA_START = 4
+_COL_STATUS = 5   # E
+_COL_ISSUES = 7   # G
+_ROW_CRITERIA_START = 2
 
 
 def _get_site_name(url):
