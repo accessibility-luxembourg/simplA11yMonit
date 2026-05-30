@@ -1,20 +1,18 @@
-fileName=$(node test/getSiteName.js $1)
+#!/bin/bash
+fileName=$(python3 test/get_site_name.py "$1")
+
 if test -f "out/$fileName.xlsx"; then
     echo "$fileName already exists"
     exit 0
-else
-    rm -rf tmp && mkdir tmp 
-    cp -r static/template-grille-audit-simplifie tmp
-    NODE_ICU_DATA=./node_modules/full-icu node ./test/accessTests.js $@
-    if [ $? -eq 0 ]
-    then
-        cd tmp/template-grille-audit-simplifie
-        powershell -Command "Compress-Archive -Path * -DestinationPath ../$fileName.zip"
-        # 7z a -tzip  ../$fileName.xlsx * 1> /dev/null
-        cd ../.. && mv tmp/$fileName.zip out/$fileName.xlsx
-        rm -rf tmp
-    else
-        echo "Audit of $fileName failed, exit code: $?"
-        exit 1
-    fi
+fi
+
+if [ ! -f "node_modules/axe-core/axe.min.js" ]; then
+    echo "axe-core not found, running npm install..."
+    npm install
+fi
+
+python3 test/access_tests.py "$@"
+if [ $? -ne 0 ]; then
+    echo "Audit of $fileName failed"
+    exit 1
 fi

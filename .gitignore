@@ -108,3 +108,6 @@ dist
 geckodriver*
 tmp/
 audits-src.txt
+
+__pycache__
+env/
