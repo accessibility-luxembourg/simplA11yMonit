@@ -1,5 +1,5 @@
 #!/bin/bash
-fileName=$(python3 test/get_site_name.py "$1")
+fileName=$(python test/get_site_name.py "$1")
 
 if test -f "out/$fileName.xlsx"; then
     echo "$fileName already exists"
@@ -11,7 +11,7 @@ if [ ! -f "node_modules/axe-core/axe.min.js" ]; then
     npm install
 fi
 
-python3 test/access_tests.py "$@"
+python test/access_tests.py "$@"
 if [ $? -ne 0 ]; then
     echo "Audit of $fileName failed"
     exit 1
