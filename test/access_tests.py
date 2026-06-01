@@ -17,20 +17,6 @@ _axe_fr_strings = json.loads((_locales_dir / 'fr.json').read_text(encoding='utf-
 
 _AXE_JS = _dir.parent / 'node_modules' / 'axe-core' / 'axe.min.js'
 
-_FORM_ELEMENTS_SELECTOR = (
-    'input[type="text"], input[type="password"], input[type="search"], '
-    'input[type="email"], input[type="number"], input[type="tel"], '
-    'input[type="url"], textarea, input[type="checkbox"], input[type="radio"], '
-    'input[type="date"], input[type="range"], input[type="color"], '
-    'input[type="time"], input[type="month"], input[type="week"], '
-    'input[type="date-local"], select, datalist, optgroup, option, '
-    'input[type="file"], output, progress, meter, '
-    '[role="progressbar"], [role="slider"], [role="spinbutton"], '
-    '[role="textbox"], [role="listbox"], [role="searchbox"], '
-    '[role="combobox"], [role="option"], [role="checkbox"], '
-    '[role="radio"], [role="switch"]'
-)
-
 # Counts visible images that are not the sole child of a link
 _NR_IMAGES_SCRIPT = """
 () => {
@@ -109,7 +95,7 @@ async def check_with_axe(page_url, pw):
         print('Run: npm install', file=sys.stderr)
         sys.exit(1)
 
-    browser = await pw.chromium.launch()
+    browser = await pw.chromium.launch(headless=False)
     ctx = await browser.new_context()
     page = await ctx.new_page()
     try:
@@ -136,25 +122,22 @@ async def check_preconditions(page_url, pw):
         'img':      ['1.1', '1.2', '1.3', '1.6', '1.7'],
         'iframe':   ['2.1'],
         'table':    ['5.6', '5.7'],
-        'formElts': ['11.5', '11.6', '11.7', '11.8', '11.9', '11.10'],
-        'form':     ['11.1', '11.2'],
-        'lang':     ['8.8'],
+        'formElts': ['11.1', '11.2','11.5', '11.6', '11.7', '11.9', '11.10'],
     }
     results = []
 
-    browser = await pw.chromium.launch()
+    # results seem more reliable when headless=False, possibly due to differences in resource loading or timing
+    browser = await pw.chromium.launch(headless=False)
     ctx = await browser.new_context()
     page = await ctx.new_page()
     try:
-        await page.goto(page_url, wait_until='load', timeout=60000)
-        counters = {
-            'img':      await page.evaluate(_NR_IMAGES_SCRIPT),
-            'iframe':   await page.locator('frame, iframe').count(),
-            'table':    await page.locator('table, [role="table"]').count(),
-            'form':     await page.locator('form, [role="form"]').count(),
-            'formElts': await page.locator(_FORM_ELEMENTS_SELECTOR).count(),
-            'lang':     await page.locator('body [lang]').count(),
-        }
+        await page.goto(page_url, wait_until='networkidle', timeout=60000)
+
+        # Compute all counts in a single, atomic page evaluation to avoid
+        # observing transient DOM states between separate calls.
+        counters = await page.evaluate(
+            (_dir / 'preconditions_analysis.js').read_text(encoding='utf-8')
+        )
     except Exception as e:
         print(f'Error checking preconditions on {page_url}: {e}', file=sys.stderr)
         return []
