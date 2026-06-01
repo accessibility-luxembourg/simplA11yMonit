@@ -36,20 +36,37 @@ async def _check_pages(pages, check_func, pw):
     return errors
 
 
+def pages_blocked_by_waf(pages, titles):
+    result = []
+    for url, title in zip(pages, titles):
+        if 'vérification de sécurité' in title.lower():
+            result.append(url)
+    return result
+
 async def _run_async(checks, reporting, lang):
     from playwright.async_api import async_playwright
 
     pages = get_pages()
     titles = get_titles(pages)
 
+    # detect pages blocked by WAF 
+    blocked = []
+    pages_to_test = pages.copy()
+    for url, title in zip(pages, titles):
+        if 'vérification de sécurité' in title.lower():
+            blocked.append(url)
+            titles[titles.index(title)] = "FIXME: page bloquée, impossible de récupérer le titre"
+            pages_to_test.remove(url)
+            
+
     try:
         async with async_playwright() as pw:
             all_errors = []
             for check in checks:
-                errors = await _check_pages(pages, check, pw)
+                errors = await _check_pages(pages_to_test, check, pw)
                 all_errors.extend(errors)
 
-        reporting(all_errors, pages, titles, lang)
+        reporting(all_errors, pages, pages_to_test, titles, lang)
     except Exception as e:
         print(f'Error: {e}', file=sys.stderr)
         sys.exit(1)

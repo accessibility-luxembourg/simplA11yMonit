@@ -54,7 +54,7 @@ def _format_issue(error):
     return '\n'.join(lines)
 
 
-def gen_report(errors, pages, titles, lang):
+def gen_report(errors, pages, tested_pages, titles, lang):
     wb = openpyxl.load_workbook(str(_TEMPLATE))
 
     # Fill Échantillon sheet (site info and page list)
@@ -95,9 +95,10 @@ def gen_report(errors, pages, titles, lang):
                     status[crit] = err_status
 
         # Fully automated criteria with no issues are confirmed compliant
-        for crit in _config['fullyAutomatedCriteria']:
-            if crit not in status and crit not in msgs:
-                status[crit] = 'c'
+        if page in tested_pages:
+            for crit in _config['fullyAutomatedCriteria']:
+                if crit not in status and crit not in msgs:
+                    status[crit] = 'c'
 
         # Always-compliant criteria are forced to C regardless of automated findings
         for crit in _config.get('alwaysCompliantCriteria', []):
