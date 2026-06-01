@@ -17,24 +17,6 @@ _axe_fr_strings = json.loads((_locales_dir / 'fr.json').read_text(encoding='utf-
 
 _AXE_JS = _dir.parent / 'node_modules' / 'axe-core' / 'axe.min.js'
 
-# Counts visible images that are not the sole child of a link
-_NR_IMAGES_SCRIPT = """
-() => {
-    function isImageLink(e) {
-        return e.parentNode.nodeName === 'A' &&
-               e.nextElementSibling === null &&
-               e.previousElementSibling === null;
-    }
-    return Array.from(document.querySelectorAll(
-        'img, [role="img"], area, input[type="image"], svg, ' +
-        'object[type="image"], embed[type="image"], canvas'
-    ))
-    .filter(e => !isImageLink(e))
-    .filter(e => window.getComputedStyle(e).display !== 'none')
-    .length;
-}
-"""
-
 def get_rgaa_id(error):
     # Expect error.tags to be an iterable of tag strings
     tags = getattr(error, 'tags', None) or error.get('tags', None) if isinstance(error, dict) else None
