@@ -62,6 +62,18 @@ Reports can be generated in French or English. Set the `LANGUAGE` environment va
 LANGUAGE=en ./run.sh https://example.com/page1 https://example.com/page2 https://example.com/page3
 ```
 
+### Captcha solver (optional)
+
+Some pages are gated behind a captcha challenge. When a page is loaded, simplA11yMonit detects such a challenge and lets the browser perform the required work to clear it, so the real page can be audited. If the challenge cannot be cleared, the page is skipped and flagged in the report.
+
+The solver itself lives in a separate, optional module that is loaded dynamically. Its location is set with the `CAPTCHA_SOLVER_PATH` environment variable (default: `../captcha_solver/captcha.py`):
+
+```bash
+CAPTCHA_SOLVER_PATH=/path/to/captcha.py ./run.sh https://example.com/page1 https://example.com/page2 https://example.com/page3
+```
+
+Relative paths are resolved against the repository root. **This module is entirely optional**: if the file is not present (or fails to load), captcha handling is silently disabled and pages are audited as-is. A notice is printed to stderr in that case.
+
 ## License
 
 This software is (c) [Information and press service](https://sip.gouvernement.lu/en.html) of the luxembourgish government and licensed under the MIT license.

@@ -1,4 +1,3 @@
-import copy
 import json
 import os
 import sys
@@ -49,14 +48,8 @@ def _tag_errors_axe(errors, url, confidence):
         e = dict(error)
         e['url'] = url
         e['confidence'] = confidence
-        if isinstance(rgaa, str):
-            e['rgaa'] = rgaa
-            result.append(e)
-        else:
-            for crit in rgaa:
-                item = copy.deepcopy(e)
-                item['rgaa'] = crit
-                result.append(item)
+        e['rgaa'] = rgaa
+        result.append(e)
     return result
 
 
@@ -71,34 +64,27 @@ def _analyse_axe(page_url, result):
     return violations + incomplete
 
 
-async def check_with_axe(page_url, pw):
+def check_with_axe(page, page_url):
     if not _AXE_JS.exists():
         print(f'Error: axe-core not found at {_AXE_JS}', file=sys.stderr)
         print('Run: npm install', file=sys.stderr)
         sys.exit(1)
 
-    browser = await pw.chromium.launch(headless=False)
-    ctx = await browser.new_context()
-    page = await ctx.new_page()
     try:
-        await page.goto(page_url, wait_until='load', timeout=60000)
-        await page.add_script_tag(path=str(_AXE_JS))
+        page.add_script_tag(path=str(_AXE_JS))
 
         if _lang == 'fr':
-            await page.evaluate('(locale) => axe.configure({locale: locale})', _axe_fr_strings)
+            page.evaluate('(locale) => axe.configure({locale: locale})', _axe_fr_strings)
 
-        axe_result = await page.evaluate("axe.run()")
+        axe_result = page.evaluate("axe.run()")
     except Exception as e:
         print(f'Error running axe on {page_url}: {e}', file=sys.stderr)
         return []
-    finally:
-        await ctx.close()
-        await browser.close()
 
     return _analyse_axe(page_url, axe_result)
 
 
-async def check_preconditions(page_url, pw):
+def check_preconditions(page, page_url):
     # Maps element types to RGAA criteria that are N/A when the element is absent
     _mapping = {
         'img':      ['1.1', '1.2', '1.3', '1.6', '1.7'],
@@ -108,24 +94,15 @@ async def check_preconditions(page_url, pw):
     }
     results = []
 
-    # results seem more reliable when headless=False, possibly due to differences in resource loading or timing
-    browser = await pw.chromium.launch(headless=False)
-    ctx = await browser.new_context()
-    page = await ctx.new_page()
     try:
-        await page.goto(page_url, wait_until='networkidle', timeout=60000)
-
         # Compute all counts in a single, atomic page evaluation to avoid
         # observing transient DOM states between separate calls.
-        counters = await page.evaluate(
+        counters = page.evaluate(
             (_dir / 'preconditions_analysis.js').read_text(encoding='utf-8')
         )
     except Exception as e:
         print(f'Error checking preconditions on {page_url}: {e}', file=sys.stderr)
         return []
-    finally:
-        await ctx.close()
-        await browser.close()
 
     for precond, criteria in _mapping.items():
         if counters.get(precond, 1) == 0:
