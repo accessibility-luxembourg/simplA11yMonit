@@ -65,10 +65,13 @@ def _check_page(browser, page_url, checks):
     empty title and no errors are returned (the page is still considered tested,
     as before).
     """
-    ctx = browser.new_context()
+
+    # some websites ask for geolocation permission on load, and the prompt can block the audit indefinitely,
+    # so we grant it upfront to let the audit proceed
+    ctx = browser.new_context(geolocation={ 'longitude': 6.130026, 'latitude': 49.609625 },permissions=['geolocation'])
     page = ctx.new_page()
     try:
-        page.goto(page_url, wait_until='load', timeout=60000)
+        page.goto(page_url, wait_until='load', timeout=100000)
         # Best-effort wait for the network to settle: some checks (e.g. the
         # precondition element counting) are more reliable once lazily-loaded
         # content has arrived. A page that never goes idle is still audited.
