@@ -71,7 +71,7 @@ The solver itself lives in a separate, optional module that is loaded dynamicall
 ```bash
 CAPTCHA_SOLVER_PATH=/path/to/captcha.py ./run.sh https://example.com/page1 https://example.com/page2 https://example.com/page3
 ```
-
+This variable can also be set up in the `.env` file.
 Relative paths are resolved against the repository root. **This module is entirely optional**: if the file is not present (or fails to load), captcha handling is silently disabled and pages are audited as-is. A notice is printed to stderr in that case.
 
 ## License
