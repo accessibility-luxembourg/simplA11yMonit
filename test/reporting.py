@@ -15,8 +15,8 @@ _STATUS_ORDER = {'c': 0, 'na': 1, 'nc': 2}
 _PAGE_SHEETS = ['P01', 'P02', 'P03']
 
 # Column indices (1-based, matching Excel columns)
-_COL_STATUS = 8   # H
-_COL_ISSUES = 9   # I
+_COL_STATUS = 5   # E
+_COL_ISSUES = 7   # H
 _ROW_CRITERIA_START = 2
 
 
