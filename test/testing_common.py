@@ -68,7 +68,8 @@ def _check_page(browser, page_url, checks):
 
     # some websites ask for geolocation permission on load, and the prompt can block the audit indefinitely,
     # so we grant it upfront to let the audit proceed
-    ctx = browser.new_context(geolocation={ 'longitude': 6.130026, 'latitude': 49.609625 },permissions=['geolocation'])
+    # we also bypass CSP to be able to inject axe even on pages with strict policies
+    ctx = browser.new_context(geolocation={ 'longitude': 6.130026, 'latitude': 49.609625 },permissions=['geolocation'], bypass_csp=True)
     page = ctx.new_page()
     try:
         page.goto(page_url, wait_until='load', timeout=100000)
